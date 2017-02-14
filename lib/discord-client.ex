@@ -54,9 +54,9 @@ defmodule DiscordIrcEx.DiscordClient do
         fn(x, acc) -> Map.put(acc, to_string(x["id"]), x["username"]) end
       )
       Regex.replace(~r/<@(\d+)>/, content, fn(mention, id) ->
-        case Map.has_key?(id_to_username, id) do
-          true -> "@#{Map.get(id_to_username, id)}"
-          false -> mention
+        case Map.get(id_to_username, id) do
+          nil -> mention
+          username -> "@#{username}"
         end
       end)
     end
