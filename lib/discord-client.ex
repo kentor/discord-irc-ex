@@ -26,10 +26,12 @@ defmodule DiscordIrcEx.DiscordClient do
           "author" => %{"id" => author_id, "username" => username},
           "channel_id" => channel_id,
           "content" => content,
+          "mentions" => mentions,
         },
       } = payload
 
       if author_id != state.client_id && content != "" do
+        content = substitute_mentions(content, mentions)
         msg = "<#{IrcColor.colorize(username)}> #{content}"
         IrcBot.relay_discord_to_irc(channel_id, msg)
       end
@@ -39,6 +41,24 @@ defmodule DiscordIrcEx.DiscordClient do
 
     def handle_event({_event, _payload}, state) do
       {:ok, state}
+    end
+
+    defp substitute_mentions(content, []) do
+      content
+    end
+
+    defp substitute_mentions(content, mentions) do
+      id_to_username = Enum.reduce(
+        mentions,
+        %{},
+        fn(x, acc) -> Map.put(acc, to_string(x["id"]), x["username"]) end
+      )
+      Regex.replace(~r/<@(\d+)>/, content, fn(mention, id) ->
+        case Map.has_key?(id_to_username, id) do
+          true -> "@#{Map.get(id_to_username, id)}"
+          false -> mention
+        end
+      end)
     end
   end
 end
