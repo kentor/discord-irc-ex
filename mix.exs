@@ -4,7 +4,7 @@ defmodule DiscordIrcEx.Mixfile do
   def project do
     [app: :discord_irc_ex,
      version: "0.1.0",
-     elixir: "~> 1.4",
+     elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]
@@ -15,7 +15,7 @@ defmodule DiscordIrcEx.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger], mod: {DiscordIrcEx, []}]
+    [applications: [:logger, :discord_ex, :exirc], mod: {DiscordIrcEx, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -30,7 +30,6 @@ defmodule DiscordIrcEx.Mixfile do
   defp deps do
     [
       {:discord_ex, git: "https://github.com/rmcafee/discord_ex.git"},
-      {:ex_json_schema, "~> 0.5.4"},
       {:exirc, ">= 0.0.0"},
     ]
   end
