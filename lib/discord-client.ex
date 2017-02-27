@@ -53,7 +53,7 @@ defmodule DiscordIrcEx.DiscordClient do
         %{},
         fn(x, acc) -> Map.put(acc, to_string(x["id"]), x["username"]) end
       )
-      Regex.replace(~r/<@(\d+)>/, content, fn(mention, id) ->
+      Regex.replace(~r/<@!*(\d+)>/, content, fn(mention, id) ->
         case Map.get(id_to_username, id) do
           nil -> mention
           username -> "@#{username}"
